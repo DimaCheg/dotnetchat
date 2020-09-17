@@ -13,23 +13,23 @@ namespace WindowsFormsSignalR
 
         public HubConnection HubConnection;
 
-        private void button1_Click(object sender, EventArgs e0)
+        private async void button1_Click(object sender, EventArgs e0)
         {
-            HubConnection = new HubConnectionBuilder().WithUrl("/chat").Build();
-            HubConnection.On("Send", (string message) => textBox2.AppendText(message + "\n"));
-            HubConnection.StartAsync();
+            HubConnection = new HubConnectionBuilder().WithUrl("http://localhost:5000/chatHub").Build();
+            HubConnection.On("ReceiveMessage", (string name, string message) => textBox2.AppendText(message + "\n"));
+            await HubConnection.StartAsync();
             button1.Enabled = false;
             button3.Enabled = true;
         }
 
         private void button2_Click(object sender, EventArgs e0)
         {
-            HubConnection.InvokeAsync("Send", textBox1.Text);
+            HubConnection.InvokeAsync("SendMessage", "Yasha",textBox1.Text);
         }
 
         private void button3_Click(object sender, EventArgs e0)
         {
-            HubConnection.DisposeAsync();
+            HubConnection.DisposeAsync().Wait();
             button3.Enabled = false;
             button1.Enabled = true;
         }
